@@ -1,7 +1,8 @@
 import requests
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 import pickle
-
+from typing import List, Optional, Union
+from datetime import datetime
 
 def load_cookies():
   with open('cookies.pkl', 'rb') as fp:
@@ -47,5 +48,66 @@ s.headers.update({
 
 res = s.get(url, params=params)
 
+class TitleCaptionTranslation(BaseModel):
+  workTitle: Optional[str]
+  workCaption: Optional[str]
+
+class BookmarkData(BaseModel):
+  id: str
+  private: bool
+
+class IllustMangaData(BaseModel):
+  id: str
+  title: str
+  illustType: int
+  xRestrict: int
+  restrict: int
+  sl: int
+  url: str
+  description: str
+  tags: List[str]
+  userId: str
+  userName: str
+  width: int
+  height: int
+  pageCount: int
+  isBookmarkable: bool
+  bookmarkData: Optional[BookmarkData]
+  alt: str
+  titleCaptionTranslation: Optional[TitleCaptionTranslation]
+  createDate: str
+  updateDate: str
+  isUnlisted: bool
+  isMasked: bool
+  profileImageUrl: str
+
+class AdContainer(BaseModel):
+  isAdContainer: bool
+
+class IllustManga(BaseModel):
+  data: List[Union[IllustMangaData, AdContainer]]
+
+class ResponseData(BaseModel):
+  illustManga: IllustManga
+  relatedTags: List[str]
+
+class Response(BaseModel):
+  error: bool
+  body: ResponseData
+
+try:
+  response = Response.parse_obj(res.json())
+except ValidationError as error:
+  ts = datetime.now().strftime('%Y%m%d_%H%M%S.%f')
+  with open(f'error_{ts}.pkl', 'wb') as fp:
+    pickle.dump({
+      'response': res,
+      'timestamp': ts,
+      'error': error,
+    }, fp)
+  raise error
+
+data = response.body.illustManga.data
+
 with open('result.json', 'w', encoding='utf-8') as fp:
-  fp.write(res.text)
+  fp.write(response.json())

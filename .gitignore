@@ -1,2 +1,4 @@
 /cookies.pkl
+*.pkl
+
 /result.json
