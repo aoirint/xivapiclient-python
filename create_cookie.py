@@ -9,3 +9,5 @@ input()
 cookies = driver.get_cookies()
 with open('cookies.pkl', 'wb') as fp:
   pickle.dump(cookies, fp)
+
+driver.quit()
