@@ -2,9 +2,10 @@ import traceback
 import pickle
 from datetime import datetime
 from pydantic import BaseModel, ValidationError
-from typing import List, Optional, Union
+from typing import List
 
 from ..util import create_session
+from .model import IllustManga
 
 # Request
 class TagSearchParams(BaseModel):
@@ -17,45 +18,6 @@ class TagSearchParams(BaseModel):
   lang: str
 
 # Response
-class TitleCaptionTranslation(BaseModel):
-  workTitle: Optional[str]
-  workCaption: Optional[str]
-
-class BookmarkData(BaseModel):
-  id: str
-  private: bool
-
-class IllustMangaData(BaseModel):
-  id: str
-  title: str
-  illustType: int
-  xRestrict: int
-  restrict: int
-  sl: int
-  url: str
-  description: str
-  tags: List[str]
-  userId: str
-  userName: str
-  width: int
-  height: int
-  pageCount: int
-  isBookmarkable: bool
-  bookmarkData: Optional[BookmarkData]
-  alt: str
-  titleCaptionTranslation: Optional[TitleCaptionTranslation]
-  createDate: str
-  updateDate: str
-  isUnlisted: bool
-  isMasked: bool
-  profileImageUrl: str
-
-class AdContainer(BaseModel):
-  isAdContainer: bool
-
-class IllustManga(BaseModel):
-  data: List[Union[IllustMangaData, AdContainer]]
-
 class TagSearchResponseData(BaseModel):
   illustManga: IllustManga
   relatedTags: List[str]
