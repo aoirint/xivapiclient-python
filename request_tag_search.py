@@ -1,4 +1,4 @@
-from pixivpy.api.tag_search import AdContainer, search_tag
+from pixivapiclient.api.tag_search import AdContainer, search_tag
 
 word = input('Keyword: ')
 
