@@ -1,3 +1,4 @@
+import traceback
 import requests
 from pydantic import BaseModel, ValidationError
 import pickle
@@ -104,6 +105,7 @@ except ValidationError as error:
       'response': res,
       'timestamp': ts,
       'error': error,
+      'traceback': traceback.format_exc(),
     }, fp)
   raise error
 
